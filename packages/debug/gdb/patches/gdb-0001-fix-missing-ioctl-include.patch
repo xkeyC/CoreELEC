@@ -1,0 +1,10 @@
+--- a/gdb/ser-tcp.c
++++ b/gdb/ser-tcp.c
+@@ -23,6 +23,7 @@
+ #include "cli/cli-decode.h"
+ #include "gdb_sys_time.h"
+
++#include <sys/ioctl.h>
+ #include <sys/types.h>
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
