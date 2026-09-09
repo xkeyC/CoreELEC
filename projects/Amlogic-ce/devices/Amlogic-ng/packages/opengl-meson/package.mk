@@ -13,11 +13,20 @@ PKG_TOOLCHAIN="manual"
 
 makeinstall_target() {
   mkdir -p ${INSTALL}/usr/lib
-    cp -p lib/arm64/gondul/r12p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.gondul.g12b.so
-    cp -p lib/arm64/dvalin/r12p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.dvalin.g12a.so
-    cp -p lib/arm64/gondul/r37p0/fbdev/libMali_r1p0.so ${INSTALL}/usr/lib/libMali.gondul.so
-    cp -p lib/arm64/dvalin/r37p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.dvalin.so
-    cp -p lib/arm64/valhall/r41p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.valhall.so
+    if [ "${TARGET_ARCH}" = "aarch64" ]; then
+      cp -p lib/arm64/gondul/r12p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.gondul.g12b.so
+      cp -p lib/arm64/dvalin/r12p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.dvalin.g12a.so
+      cp -p lib/arm64/gondul/r37p0/fbdev/libMali_r1p0.so ${INSTALL}/usr/lib/libMali.gondul.so
+      cp -p lib/arm64/dvalin/r37p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.dvalin.so
+      cp -p lib/arm64/valhall/r41p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.valhall.so
+    else
+      # 32-bit userland. The eabihf drop ships no r12p0, so the g12a/g12b
+      # specific blobs are omitted; libmali-overlay-setup already falls back
+      # to the generic dvalin/gondul ones when they are absent.
+      cp -p lib/eabihf/gondul/r37p0/fbdev/libMali_r1p0.so ${INSTALL}/usr/lib/libMali.gondul.so
+      cp -p lib/eabihf/dvalin/r37p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.dvalin.so
+      cp -p lib/eabihf/valhall/r41p0/fbdev/libMali.so ${INSTALL}/usr/lib/libMali.valhall.so
+    fi
 
     ln -sf /var/lib/libMali.so ${INSTALL}/usr/lib/libMali.so
 
