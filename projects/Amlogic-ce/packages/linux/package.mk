@@ -128,7 +128,7 @@ make_host() {
     ARCH=${HEADERS_ARCH:-$TARGET_KERNEL_ARCH} \
     HOSTCC="$TOOLCHAIN/bin/host-gcc" \
     HOSTCXX="$TOOLCHAIN/bin/host-g++" \
-    HOSTCFLAGS="$HOST_CFLAGS" \
+    HOSTCFLAGS="$HOST_CFLAGS -std=gnu89" \
     HOSTCXXFLAGS="$HOST_CXXFLAGS" \
     HOSTLDFLAGS="$HOST_LDFLAGS" \
     headers_check
@@ -139,7 +139,7 @@ makeinstall_host() {
     ARCH=${HEADERS_ARCH:-$TARGET_KERNEL_ARCH} \
     HOSTCC="$TOOLCHAIN/bin/host-gcc" \
     HOSTCXX="$TOOLCHAIN/bin/host-g++" \
-    HOSTCFLAGS="$HOST_CFLAGS" \
+    HOSTCFLAGS="$HOST_CFLAGS -std=gnu89" \
     HOSTCXXFLAGS="$HOST_CXXFLAGS" \
     HOSTLDFLAGS="$HOST_LDFLAGS" \
     INSTALL_HDR_PATH=dest \
