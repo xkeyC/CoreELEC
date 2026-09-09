@@ -44,6 +44,14 @@ post_makeinstall_host() {
 }
 
 pre_configure_target() {
+  # giscanner reads $CPP for its preprocessor. If the host value leaks in
+  # here it preprocesses target headers without -mfloat-abi=hard, so
+  # gnu/stubs.h selects gnu/stubs-soft.h, which a hard-float sysroot does
+  # not ship. Pin it to the cross preprocessor.
+  export CPP="${TARGET_PREFIX}cpp"
+  export CFLAGS="${TARGET_CFLAGS}"
+  export CXXFLAGS="${TARGET_CXXFLAGS}"
+  export LDFLAGS="${TARGET_LDFLAGS}"
   QEMU_BINARY="${TOOLCHAIN}/bin/qemu-${TARGET_ARCH}"
   PKG_CONFIG_PATH="${SYSROOT_PREFIX}/usr/lib/pkgconfig"
 
@@ -63,7 +71,7 @@ pre_configure_target() {
   export GI_SCANNER_DISABLE_CACHE=1
 
   ${QEMU_BINARY} \
-    -E LD_LIBRARY_PATH="${SYSROOT_PREFIX}/usr/lib" \
+    -E LD_LIBRARY_PATH="${SYSROOT_PREFIX}/usr/lib:${TOOLCHAIN}/${TARGET_NAME}/lib" \
     -L ${SYSROOT_PREFIX}/usr \
     "\$@"
 EOF
@@ -100,6 +108,17 @@ EOF
 EOF
 
   chmod +x ${TOOLCHAIN}/bin/g-ir-*wrapper
+}
+
+pre_make_target() {
+  # giscanner reads $CPP for its preprocessor. If the host value leaks in
+  # here it preprocesses target headers without -mfloat-abi=hard, so
+  # gnu/stubs.h selects gnu/stubs-soft.h, which a hard-float sysroot does
+  # not ship. Pin it to the cross preprocessor.
+  export CPP="${TARGET_PREFIX}cpp"
+  export CFLAGS="${TARGET_CFLAGS}"
+  export CXXFLAGS="${TARGET_CXXFLAGS}"
+  export LDFLAGS="${TARGET_LDFLAGS}"
 }
 
 post_makeinstall_target() {
