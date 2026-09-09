@@ -16,6 +16,9 @@ configure_package() {
 }
 
 pre_make_target() {
+  # fip_create hardcodes CC=gcc and -Werror, so HOSTCC flags never reach it;
+  # GCC 16 finds a set-but-unused variable there that older compilers did not
+  sed -i "s| -Werror||" $PKG_BUILD/tools/fip_create/Makefile 2>/dev/null || true
   sed -i "s|arm-none-eabi-|arm-eabi-|g" $PKG_BUILD/Makefile $PKG_BUILD/arch/arm/cpu/armv8/gx*/firmware/scp_task/Makefile 2>/dev/null || true
 }
 

@@ -11,6 +11,12 @@ PKG_LONGDESC="Compile scripts for u-boot environment."
 PKG_NEED_UNPACK="$PROJECT_DIR/$PROJECT/bootloader"
 [ -n "$DEVICE" ] && PKG_NEED_UNPACK+=" $PROJECT_DIR/$PROJECT/devices/$DEVICE/bootloader"
 
+pre_make_target() {
+  # fip_create hardcodes CC=gcc and -Werror, so HOSTCC flags never reach it;
+  # GCC 16 finds a set-but-unused variable there that older compilers did not
+  sed -i "s| -Werror||" $PKG_BUILD/tools/fip_create/Makefile 2>/dev/null || true
+}
+
 make_target() {
   if find_dir_path bootloader/scripts ; then
     for src in $FOUND_PATH/*.src ; do

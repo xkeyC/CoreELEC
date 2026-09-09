@@ -11,6 +11,12 @@ PKG_DEPENDS_TARGET="toolchain gcc7-linaro-aarch64-elf:host gcc-riscv-none-embed:
 PKG_LONGDESC="Das U-Boot is a cross-platform bootloader for embedded systems."
 PKG_TOOLCHAIN="manual"
 
+pre_make_target() {
+  # fip_create hardcodes CC=gcc and -Werror, so HOSTCC flags never reach it;
+  # GCC 16 finds a set-but-unused variable there that older compilers did not
+  sed -i "s| -Werror||" $PKG_BUILD/tools/fip_create/Makefile 2>/dev/null || true
+}
+
 make_target() {
   unset CFLAGS LDFLAGS
   [ "${BUILD_WITH_DEBUG}" = "yes" ] && PKG_DEBUG=1 || PKG_DEBUG=0
