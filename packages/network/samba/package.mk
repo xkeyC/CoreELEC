@@ -140,6 +140,9 @@ copy_directory_of_links() {
 perform_manual_install() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib
     copy_directory_of_links ${PKG_BUILD}/bin/shared ${SYSROOT_PREFIX}/usr/lib
+    # the public libs carry DT_NEEDED entries on the private ones, so the
+    # sysroot needs them too or anything linking libsmbconf fails to resolve
+    copy_directory_of_links ${PKG_BUILD}/bin/shared/private ${SYSROOT_PREFIX}/usr/lib
 
   mkdir -p ${INSTALL}/usr/lib
     copy_directory_of_links ${PKG_BUILD}/bin/shared ${INSTALL}/usr/lib
