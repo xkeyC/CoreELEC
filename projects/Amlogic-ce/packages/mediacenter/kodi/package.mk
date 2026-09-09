@@ -15,7 +15,7 @@ PKG_DEPENDS_TARGET="toolchain JsonSchemaBuilder:host TexturePacker:host Python3 
 PKG_DEPENDS_UNPACK="commons-lang3 commons-text groovy"
 PKG_DEPENDS_HOST="toolchain"
 PKG_LONGDESC="A free and open source cross-platform media player."
-PKG_BUILD_FLAGS="+speed"
+PKG_BUILD_FLAGS="+speed -gold"
 # Follow Kodi's build log live because package-level progress is too coarse.
 PKG_BUILD_OUTPUT="follow"
 
