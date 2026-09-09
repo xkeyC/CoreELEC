@@ -1,0 +1,25 @@
+opus: arm: vcvtaq_s32_f32 is an AArch64-only intrinsic
+
+vroundf() takes the vcvtaq_s32_f32() path whenever __ARM_ARCH >= 8,
+but GCC only provides that intrinsic for AArch64 - it does not appear
+in arm_neon.h for 32-bit ARM at any -march. Building for armv8-a in
+AArch32 therefore fails:
+
+  celt/arm/mathops_arm.h:41:12: error: implicit declaration of
+      function 'vcvtaq_s32_f32'; did you mean 'vcvtq_s32_f32'?
+
+Guard it on __aarch64__ only, matching vminvf() and vmaxvf() in the
+same header, so 32-bit ARM uses the portable NEON fallback that is
+already there.
+---
+--- a/celt/arm/mathops_arm.h	2026-09-10 00:26:39.297399397 +0800
++++ b/celt/arm/mathops_arm.h	2026-09-10 00:26:39.301399396 +0800
+@@ -37,7 +37,7 @@
+ 
+ static inline int32x4_t vroundf(float32x4_t x)
+ {
+-#  if defined(__aarch64__) || (defined(__ARM_ARCH) && __ARM_ARCH >= 8)
++#  if defined(__aarch64__)
+     return vcvtaq_s32_f32(x);
+ #  else
+     uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(x), vdupq_n_u32(0x80000000));
